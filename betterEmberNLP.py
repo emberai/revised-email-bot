@@ -16,19 +16,20 @@ def analyze_text():
     sentences = sent_tokenize(text) # finding each sentence in the email with nltk
     for sentence in xrange(len(sentences)):
         sentences[sentence] = sentences[sentence].replace('\n', ' ') # replace newline characters in a sentences with a space for easier formatting
+    for sentence in xrange(len(sentences)):
         times = ""
-        array = find_dates(sentences[sentence])
-        if array != [['', [], '']]: # if the sentence contains a date and/or a time, do the following:
-            date = array[0][0]
-            time = array[0][1]
-            entity = array[0][2]
-        for timestring in xrange(len(time)):
-            times += time[timestring]
-            if timestring != len(time) - 1: times += ", "  # creates a string with all the times. formats correctly if there is more than one time.
-        if date != "": datetimeSentences[sentences[sentence]] = date # if there is a date, create a key and corresponding value in the dictionary
-        if str(time) != "[]": datetimeSentences[sentences[sentence]] = times # if there is a time, create a key and corresponding value in the dictionary
-        dictWithEntities[entity] = datetimeSentences
-        datetimeSentences = {}
+        temparray = find_dates(sentences[sentence])
+        if temparray != [['', []]]: # if the sentence contains a date and/or a time, do the following:
+            date = temparray[0][0]
+            time = temparray[0][1]
+            entity = temparray[0][2]
+            for timestring in xrange(len(time)):
+                times += time[timestring]
+                if timestring != len(time) - 1: times += ", "  # creates a string with all the times. formats correctly if there is more than one time.
+            if date != "": datetimeSentences[sentences[sentence]] = date # if there is a date, create a key and corresponding value in the dictionary
+            if str(time) != "[]": datetimeSentences[sentences[sentence]] = times # if there is a time, create a key and corresponding value in the dictionary
+            dictWithEntities[entity] = datetimeSentences
+            datetimeSentences = {}
             
     return dictWithEntities    
 
@@ -95,5 +96,5 @@ def is_int(s):
         return True
     except ValueError:
         return False
-
+    
 print analyze_text()
