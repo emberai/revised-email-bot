@@ -9,7 +9,6 @@ This occurs because LUIS cannot detect more than two datetimes in a sentence.
 '''
 
 def analyze_text(): 
-    datetime_sentences = []
     datetimeSentences = {}
     dictWithEntities = {}
     with open('sample_text.txt', 'r') as f:
@@ -17,20 +16,19 @@ def analyze_text():
     sentences = sent_tokenize(text) # finding each sentence in the email with nltk
     for sentence in xrange(len(sentences)):
         sentences[sentence] = sentences[sentence].replace('\n', ' ') # replace newline characters in a sentences with a space for easier formatting
-    for sentence in xrange(len(sentences)):
         times = ""
-        if find_dates(sentences[sentence]) != [['', []]]: # if the sentence contains a date and/or a time, do the following:
-            date = find_dates(sentences[sentence])[0][0]
-            time = find_dates(sentences[sentence])[0][1]
-            entity = find_dates(sentences[sentence])[0][2]
-            for timestring in xrange(len(time)):
-                times += time[timestring]
-                if timestring != len(time) - 1: times += ", "  # creates a string with all the times. formats correctly if there is more than one time.
-            if date != "": datetimeSentences[sentences[sentence]] = date # if there is a date, create a key and corresponding value in the dictionary
-            if str(time) != "[]": datetimeSentences[sentences[sentence]] = times # if there is a time, create a key and corresponding value in the dictionary
-            #datetime_sentences.append([sentences[sentence], find_dates(sentences[sentence])])
-            dictWithEntities[entity] = datetimeSentences
-            datetimeSentences = {}
+        array = find_dates(sentences[sentence])
+        if array != [['', [], '']]: # if the sentence contains a date and/or a time, do the following:
+            date = array[0][0]
+            time = array[0][1]
+            entity = array[0][2]
+        for timestring in xrange(len(time)):
+            times += time[timestring]
+            if timestring != len(time) - 1: times += ", "  # creates a string with all the times. formats correctly if there is more than one time.
+        if date != "": datetimeSentences[sentences[sentence]] = date # if there is a date, create a key and corresponding value in the dictionary
+        if str(time) != "[]": datetimeSentences[sentences[sentence]] = times # if there is a time, create a key and corresponding value in the dictionary
+        dictWithEntities[entity] = datetimeSentences
+        datetimeSentences = {}
             
     return dictWithEntities    
 
@@ -87,7 +85,6 @@ def find_dates(string):
     array.append(times)
     array.append(entity)
     dates.append(array)
-    #print dates
     array = []
 
     return dates
@@ -100,4 +97,3 @@ def is_int(s):
         return False
 
 print analyze_text()
-    
